@@ -15,7 +15,12 @@ func NewServer(cfg *config.Config) *Server {
 }
 
 func (s *Server) Start() error {
+    // Serve static files for sender and receiver
+    http.Handle("/sender/", http.StripPrefix("/sender/", http.FileServer(http.Dir("./web/sender"))))
+    http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
+    
+    // Handle streaming
     http.HandleFunc("/stream", stream.HandleStream)
-    http.Handle("/", http.FileServer(http.Dir("./web/receiver")))
+
     return http.ListenAndServe(":"+s.Config.ServerPort, nil)
 }
