@@ -16,33 +16,30 @@ func NewServer(cfg *config.Config) *Server {
     return &Server{Config: cfg}
 }
 
-func (s *Server) Start() error {
+func (s *Server) Start(role string) error {
     utils.InitLogger()
 
     // Serve static files for sender and receiver
     http.Handle("/sender/", http.StripPrefix("/sender/", http.FileServer(http.Dir("./web/sender"))))
     http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
-    
+
     // Handle streaming
     http.HandleFunc("/stream", stream.HandleStream)
 
-    senderAddr := fmt.Sprintf(":%s", s.Config.SenderPort)
-    receiverAddr := fmt.Sprintf(":%s", s.Config.ReceiverPort)
-
-    go func() {
-        if err := http.ListenAndServe(senderAddr, nil); err != nil {
-            utils.ErrorLogger.Fatalf("Error starting sender server: %v", err)
-        }
-    }()
-
-    utils.InfoLogger.Printf("Sender server starting on port %s...", s.Config.SenderPort)
-
-    if err := http.ListenAndServe(receiverAddr, nil); err != nil {
-        utils.ErrorLogger.Fatalf("Error starting receiver server: %v", err)
+    var addr string
+    if role == "sender" {
+        addr = fmt.Sprintf(":%s", s.Config.SenderPort)
+        utils.InfoLogger.Printf("Sender server starting on port %s...", s.Config.SenderPort)
+    } else if role == "receiver" {
+        addr = fmt.Sprintf(":%s", s.Config.ReceiverPort)
+        utils.InfoLogger.Printf("Receiver server starting on port %s...", s.Config.ReceiverPort)
+    } else {
+        return fmt.Errorf("unknown server role: %s", role)
     }
 
-    utils.InfoLogger.Printf("Receiver server starting on port %s...", s.Config.ReceiverPort)
-
+    if err := http.ListenAndServe(addr, nil); err != nil {
+        return fmt.Errorf("error starting %s server: %v", role, err)
+    }
 
     return nil
 }

@@ -13,7 +13,7 @@ func main() {
     srv := server.NewServer(cfg)
 
     utils.InfoLogger.Printf("Sender server starting on port %s...", cfg.SenderPort)
-    if err := srv.Start(); err != nil {
+    if err := srv.Start("sender"); err != nil {
         utils.ErrorLogger.Fatalf("Error starting sender server: %v", err)
     }
 }
