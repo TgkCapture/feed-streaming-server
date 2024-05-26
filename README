@@ -1,0 +1,6 @@
+# Feed Streaming Server
+
+This project is an experimental video streaming server built with Go on the backend and HTML/JavaScript on the frontend. The primary goal is to leverage Go to solve our problem of sharing video feeds with our counterparts. We welcome any help and contributions to improve this project.
+
+
+
