@@ -11,6 +11,7 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
         // Handle incoming stream
         file, _, err := r.FormFile("video")
         if err != nil {
+            utils.ErrorLogger.Printf("Error receiving stream: %v", err)
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
@@ -23,8 +24,10 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("Stream received"))
     } else if r.Method == http.MethodGet {
         // Stream to the viewer
+        utils.InfoLogger.Println("Streaming video to viewer")
         http.ServeFile(w, r, "./internal/utils/nature.mp4")
     } else {
+        utils.ErrorLogger.Println("Invalid request method")
         http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
     }
 }
