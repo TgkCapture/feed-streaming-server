@@ -1,17 +1,19 @@
 package main
 
 import (
-    "log"
     "feed-streaming-server/internal/config"
     "feed-streaming-server/internal/server"
+    "feed-streaming-server/internal/utils"
 )
 
 func main() {
+    utils.InitLogger()
+    
     cfg := config.LoadConfig()
     srv := server.NewServer(cfg)
 
-    log.Printf("Sender server starting on port %s...", cfg.ServerPort)
+    utils.InfoLogger.Printf("Sender server starting on port %s...", cfg.ServerPort)
     if err := srv.Start(); err != nil {
-        log.Fatalf("Error starting sender server: %v", err)
+        utils.ErrorLogger.Fatalf("Error starting sender server: %v", err)
     }
 }

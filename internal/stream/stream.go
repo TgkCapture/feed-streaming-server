@@ -1,9 +1,9 @@
 package stream
 
 import (
-    "io"
-    "log"
-    "net/http"
+	"feed-streaming-server/internal/utils"
+	"io"
+	"net/http"
 )
 
 func HandleStream(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +17,7 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
         defer file.Close()
 
         // Simulate saving or broadcasting the video stream
-        log.Println("Receiving stream")
+        utils.InfoLogger.Println("Receiving stream")
         io.Copy(io.Discard, file)
         w.WriteHeader(http.StatusOK)
         w.Write([]byte("Stream received"))

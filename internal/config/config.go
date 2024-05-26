@@ -1,9 +1,9 @@
 package config
 
 import (
-    "github.com/joho/godotenv"
-    "log"
-    "os"
+	"feed-streaming-server/internal/utils"
+	"os"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -14,7 +14,7 @@ type Config struct {
 func LoadConfig() *Config {
     err := godotenv.Load()
     if err != nil {
-        log.Fatalf("Error loading .env file")
+        utils.ErrorLogger.Fatalf("Error loading .env file")
     }
 
     return &Config{
