@@ -1,2 +1,2 @@
 #!/bin/bash
-go run cmd/receiver/main.go
+go run cmd/receiver/main.go receiver
