@@ -32,3 +32,11 @@ go.work
 
 # Temporary files
 tmp/
+
+# Videos
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.mkv
+*.flv
