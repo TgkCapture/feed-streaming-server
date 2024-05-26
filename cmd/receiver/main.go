@@ -12,7 +12,7 @@ func main() {
     cfg := config.LoadConfig()
     srv := server.NewServer(cfg)
 
-    utils.InfoLogger.Printf("Receiver server starting on port %s...", cfg.ServerPort)
+    utils.InfoLogger.Printf("Receiver server starting on port %s...", cfg.ReceiverPort)
     if err := srv.Start(); err != nil {
         utils.ErrorLogger.Fatalf("Error starting receiver server: %v", err)
     }

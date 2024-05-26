@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-    ServerPort string
-    StreamKey  string
+    SenderPort   string
+    ReceiverPort string
+    StreamKey    string
 }
 
 func LoadConfig() *Config {
@@ -18,7 +19,8 @@ func LoadConfig() *Config {
     }
 
     return &Config{
-        ServerPort: os.Getenv("SERVER_PORT"),
+        SenderPort:   os.Getenv("SENDER_PORT"),
+        ReceiverPort: os.Getenv("RECEIVER_PORT"),
         StreamKey:  os.Getenv("STREAM_KEY"),
     }
 }
