@@ -1,7 +1,7 @@
 package config
 
 import (
-	"feed-streaming-server/internal/utils"
+	"github.com/TgkCapture/feed-streaming-server/internal/utils"
 	"os"
 	"github.com/joho/godotenv"
 )

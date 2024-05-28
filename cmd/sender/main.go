@@ -1,9 +1,9 @@
 package main
 
 import (
-    "feed-streaming-server/internal/config"
-    "feed-streaming-server/internal/server"
-    "feed-streaming-server/internal/utils"
+    "github.com/TgkCapture/feed-streaming-server/internal/config"
+    "github.com/TgkCapture/feed-streaming-server/internal/server"
+    "github.com/TgkCapture/feed-streaming-server/internal/utils"
 )
 
 func main() {

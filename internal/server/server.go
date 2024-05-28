@@ -3,9 +3,9 @@ package server
 import (
     "fmt"
     "net/http"
-    "feed-streaming-server/internal/config"
-    "feed-streaming-server/internal/stream"
-    "feed-streaming-server/internal/utils"
+    "github.com/TgkCapture/feed-streaming-server/internal/config"
+    "github.com/TgkCapture/feed-streaming-server/internal/stream"
+    "github.com/TgkCapture/feed-streaming-server/internal/utils"
 )
 
 type Server struct {

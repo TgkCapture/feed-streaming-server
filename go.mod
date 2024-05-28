@@ -1,4 +1,4 @@
-module feed-streaming-server
+module github.com/TgkCapture/feed-streaming-server
 
 go 1.22.3
 
