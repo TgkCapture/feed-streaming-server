@@ -1,16 +1,38 @@
 package main
 
 import (
-    "github.com/TgkCapture/feed-streaming-server/internal/config"
-    "github.com/TgkCapture/feed-streaming-server/internal/server"
-    "github.com/TgkCapture/feed-streaming-server/internal/utils"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/TgkCapture/feed-streaming-server/internal/config"
+	"github.com/TgkCapture/feed-streaming-server/internal/db"
+	"github.com/TgkCapture/feed-streaming-server/internal/server"
+	"github.com/TgkCapture/feed-streaming-server/internal/utils"
 )
 
 func main() {
     utils.InitLogger()
 
     cfg := config.LoadConfig()
+
+    if err := db.InitDB(cfg); err != nil {
+        utils.ErrorLogger.Fatalf("Failed to initialize database: %v", err)
+    }
+    defer db.CloseDB()
+
     srv := server.NewServer(cfg)
+
+    // Handle graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    go func() {
+        <-quit
+        log.Println("Shutting down server...")
+        db.CloseDB()
+        os.Exit(0)
+    }()
 
     utils.InfoLogger.Printf("Receiver server starting on port %s...", cfg.ReceiverPort)
     if err := srv.Start("receiver"); err != nil {
