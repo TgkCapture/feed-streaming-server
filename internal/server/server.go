@@ -24,6 +24,10 @@ func (s *Server) Start(role string) error {
 	http.Handle("/sender/", http.StripPrefix("/sender/", http.FileServer(http.Dir("./web/sender"))))
 	http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
 	http.Handle("/login/", http.StripPrefix("/login/", http.FileServer(http.Dir("./web/sender"))))
+	http.Handle("/register/", http.StripPrefix("/register/", http.FileServer(http.Dir("./web/sender"))))
+
+	// Handle registration
+    http.HandleFunc("/register", handlers.RegisterHandler)
 
 	// Handle login
 	http.HandleFunc("/login", handlers.LoginHandler)
