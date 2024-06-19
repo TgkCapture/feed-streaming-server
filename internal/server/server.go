@@ -24,7 +24,7 @@ func (s *Server) Start(role string) error {
     http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
 
     // Handle streaming
-    http.HandleFunc("/stream", stream.HandleStream)
+    http.Handle("/stream", utils.Authenticate(http.HandlerFunc(stream.HandleStream)))
 
     var addr string
     if role == "sender" {
