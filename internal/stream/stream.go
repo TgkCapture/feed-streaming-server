@@ -26,15 +26,17 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
         }
         defer file.Close()
 
-        filename := utils.GenerateUniqueFilename(header.Filename)
+        title := r.FormValue("title")
+        description := r.FormValue("description")
 
-        // Save file to disk
+        filename := utils.GenerateUniqueFilename(header.Filename)
         uploadDir := "./internal/utils/uploaded_videos"
         if err := ensureDir(uploadDir); err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
-        f, err := os.Create(filepath.Join(uploadDir, filename))
+        filePath := filepath.Join(uploadDir, filename)
+        f, err := os.Create(filePath)
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
@@ -46,8 +48,11 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
             return
         }
 
-        // Insert record into database
-        _, err = db.DB.Exec("INSERT INTO videos (filename) VALUES (?)", filename)
+        fileURL := fmt.Sprintf("/uploaded_videos/%s", filename)
+
+        // Insert into database
+        _, err = db.DB.Exec("INSERT INTO videos (filename, url, title, description) VALUES (?, ?, ?, ?)",
+            filename, fileURL, title, description)
         if err != nil {
             http.Error(w, "Database insert error", http.StatusInternalServerError)
             return
@@ -59,8 +64,8 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
 
     } else if r.Method == http.MethodGet {
         // Retrieve the latest video from the database
-        var filename string
-        err := db.DB.QueryRow("SELECT filename FROM videos ORDER BY upload_time DESC LIMIT 1").Scan(&filename)
+        var filename, url string
+        err := db.DB.QueryRow("SELECT filename, url FROM videos ORDER BY upload_time DESC LIMIT 1").Scan(&filename, &url)
         if err != nil {
             if err == sql.ErrNoRows {
                 http.Error(w, "No videos found", http.StatusNotFound)
@@ -71,9 +76,7 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
         }
 
         // Stream the video file
-        uploadDir := "./internal/utils/uploaded_videos"
-        filePath := filepath.Join(uploadDir, filename)
-
+        filePath := filepath.Join("./internal/utils", url)
         file, err := os.Open(filePath)
         if err != nil {
             http.Error(w, "File not found", http.StatusNotFound)
