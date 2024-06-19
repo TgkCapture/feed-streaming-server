@@ -5,8 +5,12 @@ import (
 	"net/http"
 	"os"
 	"time"
+    "database/sql"
+    "errors"
+    "golang.org/x/crypto/bcrypt"
 
 	"github.com/dgrijalva/jwt-go"
+    
 )
 
 type contextKey string
@@ -58,4 +62,21 @@ func Authenticate(next http.Handler) http.Handler {
 
         next.ServeHTTP(w, r)
     })
+}
+
+func VerifyCredentials(db *sql.DB, username, password string) error {
+    var storedHash string
+    err := db.QueryRow("SELECT password_hash FROM users WHERE username = ?", username).Scan(&storedHash)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return errors.New("invalid username or password")
+        }
+        return err
+    }
+
+    if err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password)); err != nil {
+        return errors.New("invalid username or password")
+    }
+
+    return nil
 }
