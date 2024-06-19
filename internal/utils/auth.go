@@ -23,6 +23,11 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
+type User struct {
+    Username string `json:"username"`
+    Password string `json:"password"`
+}
+
 func GenerateJWT(username string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
@@ -62,6 +67,20 @@ func Authenticate(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func RegisterUser(db *sql.DB, username, password string) error {
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return err
+    }
+
+    _, err = db.Exec("INSERT INTO users (username, password_hash) VALUES (?, ?)", username, string(hashedPassword))
+    if err != nil {
+        return err
+    }
+
+    return nil
 }
 
 func VerifyCredentials(db *sql.DB, username, password string) error {
