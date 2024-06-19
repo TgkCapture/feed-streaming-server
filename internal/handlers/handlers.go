@@ -3,9 +3,15 @@ package handlers
 import (
     "encoding/json"
     "net/http"
+
     "github.com/TgkCapture/feed-streaming-server/internal/utils"
     "github.com/TgkCapture/feed-streaming-server/internal/db"
 )
+
+type RegisterRequest struct {
+    Username string `json:"username"`
+    Password string `json:"password"`
+}
 
 type LoginRequest struct {
     Username string `json:"username"`
@@ -14,6 +20,23 @@ type LoginRequest struct {
 
 type LoginResponse struct {
     Token string `json:"token"`
+}
+
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+    var req RegisterRequest
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "Invalid request payload", http.StatusBadRequest)
+        return
+    }
+
+    
+    if err := utils.RegisterUser(db.DB, req.Username, req.Password); err != nil {
+        http.Error(w, "Failed to register user", http.StatusInternalServerError)
+        return
+    }
+
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("User registered successfully"))
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
