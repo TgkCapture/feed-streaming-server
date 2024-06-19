@@ -7,7 +7,6 @@ import (
     "net/http"
     "os"
     "path/filepath"
-    
 
     "github.com/TgkCapture/feed-streaming-server/internal/utils"
     "github.com/TgkCapture/feed-streaming-server/internal/db"
@@ -73,7 +72,22 @@ func HandleStream(w http.ResponseWriter, r *http.Request) {
 
         // Stream the video file
         uploadDir := "./internal/utils/uploaded_videos"
-        http.ServeFile(w, r, filepath.Join(uploadDir, filename))
+        filePath := filepath.Join(uploadDir, filename)
+
+        file, err := os.Open(filePath)
+        if err != nil {
+            http.Error(w, "File not found", http.StatusNotFound)
+            return
+        }
+        defer file.Close()
+
+        fi, err := file.Stat()
+        if err != nil {
+            http.Error(w, "File not found", http.StatusNotFound)
+            return
+        }
+
+        http.ServeContent(w, r, fi.Name(), fi.ModTime(), file)
     } else {
         http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
     }
