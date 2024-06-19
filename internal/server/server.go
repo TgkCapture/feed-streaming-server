@@ -6,6 +6,7 @@ import (
     "github.com/TgkCapture/feed-streaming-server/internal/config"
     "github.com/TgkCapture/feed-streaming-server/internal/stream"
     "github.com/TgkCapture/feed-streaming-server/internal/utils"
+     "github.com/TgkCapture/feed-streaming-server/internal/handlers"
 )
 
 type Server struct {
@@ -22,6 +23,9 @@ func (s *Server) Start(role string) error {
     // Serve static files for sender and receiver
     http.Handle("/sender/", http.StripPrefix("/sender/", http.FileServer(http.Dir("./web/sender"))))
     http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
+
+    // Handle login
+    http.HandleFunc("/login", handlers.LoginHandler)
 
     // Handle streaming
     http.Handle("/stream", utils.Authenticate(http.HandlerFunc(stream.HandleStream)))
