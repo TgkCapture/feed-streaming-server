@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Videos</title>
+    <link rel="stylesheet" href="/styles/manage.css">
+</head>
+<body>
+    <h1>Manage Uploaded Videos</h1>
+    <table id="videos-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Filename</th>
+                <th>URL</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/sender/login.html';
+            }
+
+            fetch('/manage/videos', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(videos => {
+                const tableBody = document.getElementById('videos-table').getElementsByTagName('tbody')[0];
+                videos.forEach(video => {
+                    const row = tableBody.insertRow();
+                    row.insertCell(0).textContent = video.id;
+                    row.insertCell(1).textContent = video.filename;
+                    row.insertCell(2).innerHTML = `<a href="${video.url}" target="_blank">View</a>`;
+                    const deleteCell = row.insertCell(3);
+                    deleteCell.innerHTML = `<button data-id="${video.id}">Delete</button>`;
+                    deleteCell.querySelector('button').addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        fetch(`/manage/delete?id=${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                row.remove();
+                            } else {
+                                alert('Error deleting video');
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
