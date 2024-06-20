@@ -5,18 +5,41 @@
 </head>
 <body>
     <h1>Sender Interface</h1>
-    <form action="/stream" method="post" enctype="multipart/form-data">
+    <form id="upload-form" enctype="multipart/form-data">
         <input type="file" name="video" accept="video/*">
         <button type="submit">Stream Video</button>
     </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    
             const token = localStorage.getItem('token');
             if (!token) {
                 window.location.href = '/sender/login.html';
             }
+
+            const form = document.getElementById('upload-form');
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                try {
+                    const response = await fetch('/stream', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Upload failed');
+                    }
+
+                    alert('Video uploaded successfully');
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
         });
     </script>
 </body>
