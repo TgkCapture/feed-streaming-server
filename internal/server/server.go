@@ -33,7 +33,7 @@ func (s *Server) Start(role string) error {
 	http.HandleFunc("/login", handlers.LoginHandler)
 
 	// Handle streaming
-	http.Handle("/stream", utils.Authenticate(http.HandlerFunc(stream.HandleStream)))
+	http.HandleFunc("/stream", stream.HandleStream)
 
 	var addr string
 	if role == "sender" {
