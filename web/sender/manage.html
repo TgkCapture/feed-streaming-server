@@ -2,7 +2,55 @@
 <html>
 <head>
     <title>Manage Videos</title>
-    <link rel="stylesheet" href="/styles/manage.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            background-color: #e74c3c;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+        }
+    </style>
 </head>
 <body>
     <h1>Manage Uploaded Videos</h1>
@@ -23,6 +71,7 @@
             const token = localStorage.getItem('token');
             if (!token) {
                 window.location.href = '/sender/login.html';
+                return;
             }
 
             fetch('/manage/videos', {
@@ -31,7 +80,12 @@
                     'Authorization': `Bearer ${token}`
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch videos');
+                }
+                return response.json();
+            })
             .then(videos => {
                 const tableBody = document.getElementById('videos-table').getElementsByTagName('tbody')[0];
                 videos.forEach(video => {
@@ -55,9 +109,17 @@
                             } else {
                                 alert('Error deleting video');
                             }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error deleting video');
                         });
                     });
                 });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch videos');
             });
         });
     </script>
