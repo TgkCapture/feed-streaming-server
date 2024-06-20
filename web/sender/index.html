@@ -1,13 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sender</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content h1 {
+            font-size: 2em;
+        }
+
+        .content p {
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sender Interface</h1>
-    <form action="/stream" method="post" enctype="multipart/form-data">
-        <input type="file" name="video" accept="video/*">
-        <button type="submit">Stream Video</button>
-    </form>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/upload.html">Upload</a></li>
+                <li><a href="#" id="logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+        <h1>Welcome to the Homepage</h1>
+        <p>This is a protected page accessible only to authenticated users.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/sender/login.html';
+            }
+
+            const logoutButton = document.getElementById('logout');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                
+                    localStorage.removeItem('token');
+                
+                    window.location.href = '/sender/login.html';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
