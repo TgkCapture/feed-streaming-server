@@ -35,6 +35,11 @@ func (s *Server) Start(role string) error {
 	// Handle streaming
 	http.HandleFunc("/stream", stream.HandleStream)
 
+	// Handle video management
+	http.Handle("/manage/videos", utils.Authenticate(http.HandlerFunc(handlers.GetAllVideosHandler)))
+	http.Handle("/manage/delete", utils.Authenticate(http.HandlerFunc(handlers.DeleteVideoHandler)))
+
+
 	var addr string
 	if role == "sender" {
 		addr = fmt.Sprintf(":%s", s.Config.SenderPort)
