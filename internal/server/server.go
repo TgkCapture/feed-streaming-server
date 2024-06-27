@@ -25,9 +25,10 @@ func (s *Server) Start(role string) error {
 	http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
 	http.Handle("/login/", http.StripPrefix("/login/", http.FileServer(http.Dir("./web/sender"))))
 	http.Handle("/register/", http.StripPrefix("/register/", http.FileServer(http.Dir("./web/sender"))))
+	http.Handle("/video/", http.StripPrefix("/video/", http.FileServer(http.Dir("./web/sender"))))
 
 	// Handle registration
-    http.HandleFunc("/register", handlers.RegisterHandler)
+	http.HandleFunc("/register", handlers.RegisterHandler)
 
 	// Handle login
 	http.HandleFunc("/login", handlers.LoginHandler)
@@ -38,7 +39,6 @@ func (s *Server) Start(role string) error {
 	// Handle video management
 	http.Handle("/manage/videos", utils.Authenticate(http.HandlerFunc(handlers.GetAllVideosHandler)))
 	http.Handle("/manage/delete", utils.Authenticate(http.HandlerFunc(handlers.DeleteVideoHandler)))
-
 
 	var addr string
 	if role == "sender" {
