@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Manage Videos</title>
-    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -92,7 +91,7 @@
                     const row = tableBody.insertRow();
                     row.insertCell(0).textContent = video.id;
                     row.insertCell(1).textContent = video.filename;
-                    row.insertCell(2).innerHTML = `<a href="/sender/video.html?url=${encodeURIComponent(video.url)}" target="_blank">View</a>`;
+                    row.insertCell(2).innerHTML = `<a href="/sender/video.html?url=${encodeURIComponent('/uploaded_videos/' + video.filename)}" target="_blank">View</a>`;
                     const deleteCell = row.insertCell(3);
                     deleteCell.innerHTML = `<button data-id="${video.id}">Delete</button>`;
                     deleteCell.querySelector('button').addEventListener('click', function() {

@@ -42,7 +42,7 @@
             const videoUrl = urlParams.get('url');
 
             if (videoUrl) {
-                document.getElementById('video-source').src = videoUrl;
+                document.getElementById('video-source').src = decodeURIComponent(videoUrl);
             } else {
                 alert('Video URL not found');
                 window.location.href = '/sender/manage.html';

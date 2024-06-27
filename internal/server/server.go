@@ -25,7 +25,9 @@ func (s *Server) Start(role string) error {
 	http.Handle("/receiver/", http.StripPrefix("/receiver/", http.FileServer(http.Dir("./web/receiver"))))
 	http.Handle("/login/", http.StripPrefix("/login/", http.FileServer(http.Dir("./web/sender"))))
 	http.Handle("/register/", http.StripPrefix("/register/", http.FileServer(http.Dir("./web/sender"))))
-	http.Handle("/video/", http.StripPrefix("/video/", http.FileServer(http.Dir("./web/sender"))))
+
+	// Serve uploaded videos
+	http.Handle("/uploaded_videos/", http.StripPrefix("/uploaded_videos/", http.FileServer(http.Dir("./internal/utils/uploaded_videos"))))
 
 	// Handle registration
 	http.HandleFunc("/register", handlers.RegisterHandler)
